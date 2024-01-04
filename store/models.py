@@ -30,28 +30,35 @@ class Customer(models.Model):
         (FEMALE_CHOICE,'FEMALE'),
         (OTHER_CHOICE,'OTHER')
     ]
+    first_name=models.CharField(max_length=100)
+    middle_name=models.CharField(max_length=100,blank=True,null=True)
+    last_name=models.CharField(max_length=100)
     address=models.CharField(max_length=100)
     gender=models.CharField(
         max_length=1,
         choices=GENDER_CHOICES
     )
     user=models.ForeignKey(User,on_delete=models.CASCADE)
-    def __str__(self)->str:
-        return self.name
+    def __str__(self):
+        return self.first_name
+    
+    
+    
     
     
     
 class Cart(models.Model):
     customer=models.ForeignKey(Customer, on_delete=models.CASCADE)
-    def __str__(self)->str:
-        return self.name
+    def __str__(self):
+        return self.customer
     
+     
     
 class CartItem(models.Model):
     product=models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity=models.IntegerField(default=1)
-    def __str__(self)->str:
-        return self.name
+    cart=models.ForeignKey(Cart, on_delete=models.CASCADE)
+
     
 
 class Order(models.Model):
@@ -70,8 +77,7 @@ class Order(models.Model):
     status=models.CharField(max_length=2,choices=STATUS_CHOICES,default=PENDING_CHOICES)
     payment_status=models.BooleanField(default=False)
     shipping_address=models.CharField(max_length=296)
-    def __str__(self)->str:
-        return self.name
+
     
     
 class OrderItem(models.Model):
@@ -90,8 +96,8 @@ class OrderItem(models.Model):
     price=models.FloatField()
     quantity=models.IntegerField(default=1)
     status=models.CharField(max_length=2,choices=STATUS_CHOICES,default=PENDING_CHOICES)
-    def __str__(self)->str:
-        return self.name
+    order=models.ForeignKey(Order, on_delete=models.PROTECT)
+
     
 
 class Review(models.Model):
