@@ -41,7 +41,7 @@ class CartAdmin(admin.ModelAdmin):
     inlines=(CartItemInline,)
     
     
-class OrderItemInline(admin.TabularInline):
+class OrderItemInline(admin.StackedInline):
     model = OrderItem
     
     

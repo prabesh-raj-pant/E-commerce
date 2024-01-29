@@ -49,8 +49,7 @@ class Customer(models.Model):
     
 class Cart(models.Model):
     customer=models.ForeignKey(Customer, on_delete=models.CASCADE)
-    def __str__(self):
-        return self.customer
+
     
      
     
@@ -103,4 +102,4 @@ class OrderItem(models.Model):
 class Review(models.Model):
     product=models.ForeignKey(Product, on_delete=models.CASCADE)
     customer=models.ForeignKey(Customer, on_delete=models.CASCADE) 
-    star=models.IntegerField(max_length=5)
+    star=models.IntegerField()
