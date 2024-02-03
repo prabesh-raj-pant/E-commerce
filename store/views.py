@@ -6,59 +6,36 @@ from .models import *
 from .serializers import *
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework import generics
+from rest_framework import mixins
 # Create your views here.
 
 # class base view
-class CategoryList(APIView):
+class CategoryList(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
+  queryset=Category.objects.all()
+  serializer_class=CategorySerializer
+  
   def get(self,request):
-    categories=Category.objects.all()
-    serializer=CategorySerializer(categories,many=True)
-    return Response(serializer.data)
+    return self.list(request)
   
   def post(self,request):
-    serializer=CategorySerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    return Response({
-      'error':"error in creating new category",  
-    },
-    status=status.HTTP_201_CREATED)
+    return self.create(request)
+  
   
 
 
-
-
-class CategoryDetails(APIView):
-  def get_object(self,pk):
-    try:
-      return Category.objects.get(pk=pk)
-    except Category.DoesNotExist:
-      raise Http404
+class CategoryDetails(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
+  queryset=Category.objects.all()
+  serializer_class=CategorySerializer
   
-  def get(self,request,pk):
-    category=self.get_object(pk)
-    serializer=CategorySerializer(category)
-    return Response(
-        serializer.data,
-      )
+  def get(self,request,*args,**kwargs):
+    return self.retrieve(request,*args,**kwargs)
     
-  def delete(self,request,pk):
-    category=self.get_object(pk)
-    category.delete()
-    return Response(
-        status=status.HTTP_204_NO_CONTENT
-      )
+  def delete(self,request,*args,**kwargs):
+    return self.destroy(request,*args,**kwargs)
     
-  def put(self,request,pk):
-    category=self.get_object(pk)
-    serializer=CategorySerializer(category,data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    return Response(
-        {
-          'details':'data has been updated'
-        }
-      )
+  def put(self,request,*args,**kwargs):
+    return self.update(request,*args,**kwargs)
 
 
 
