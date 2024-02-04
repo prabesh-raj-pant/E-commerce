@@ -1,42 +1,26 @@
-from django.http import Http404
-from django.shortcuts import render,get_object_or_404
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+
 from .models import *
 from .serializers import *
-from rest_framework import status
-from rest_framework.views import APIView
 from rest_framework import generics
-from rest_framework import mixins
 # Create your views here.
 
 # class base view
-class CategoryList(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
+class CategoryList(generics.ListCreateAPIView):
+  queryset=Category.objects.all()
+  serializer_class=CategorySerializer
+
+
+class CategoryDetails(generics.RetrieveUpdateDestroyAPIView):
   queryset=Category.objects.all()
   serializer_class=CategorySerializer
   
-  def get(self,request):
-    return self.list(request)
-  
-  def post(self,request):
-    return self.create(request)
-  
-  
+class ProductList(generics.ListCreateAPIView):
+  queryset=Product.objects.all()
+  serializer_class=ProductSerializer
 
-
-class CategoryDetails(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin,generics.GenericAPIView):
-  queryset=Category.objects.all()
-  serializer_class=CategorySerializer
-  
-  def get(self,request,*args,**kwargs):
-    return self.retrieve(request,*args,**kwargs)
-    
-  def delete(self,request,*args,**kwargs):
-    return self.destroy(request,*args,**kwargs)
-    
-  def put(self,request,*args,**kwargs):
-    return self.update(request,*args,**kwargs)
-
+class ProductDetails(generics.RetrieveUpdateDestroyAPIView):
+  queryset=Product.objects.all()
+  serializer_class=ProductSerializer
 
 
 
