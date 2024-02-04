@@ -1,26 +1,41 @@
-
+from rest_framework.response import Response
 from .models import *
 from .serializers import *
-from rest_framework import generics
+from rest_framework import generics,viewsets
+from rest_framework.decorators import action
 # Create your views here.
 
-# class base view
-class CategoryList(generics.ListCreateAPIView):
-  queryset=Category.objects.all()
-  serializer_class=CategorySerializer
-
-
-class CategoryDetails(generics.RetrieveUpdateDestroyAPIView):
+# viewset
+class CategoryViewset(viewsets.ModelViewSet):
   queryset=Category.objects.all()
   serializer_class=CategorySerializer
   
-class ProductList(generics.ListCreateAPIView):
-  queryset=Product.objects.all()
+  
+  
+
+  #select_related  do join table operation
+class ProductViewset(viewsets.ModelViewSet):
+  queryset=Product.objects.select_related('category').all()
   serializer_class=ProductSerializer
 
-class ProductDetails(generics.RetrieveUpdateDestroyAPIView):
-  queryset=Product.objects.all()
-  serializer_class=ProductSerializer
+
+# class base view
+# class CategoryList(generics.ListCreateAPIView):
+#   queryset=Category.objects.all()
+#   serializer_class=CategorySerializer
+
+
+# class CategoryDetails(generics.RetrieveUpdateDestroyAPIView):
+#   queryset=Category.objects.all()
+#   serializer_class=CategorySerializer
+  
+# class ProductList(generics.ListCreateAPIView):
+#   queryset=Product.objects.all()
+#   serializer_class=ProductSerializer
+
+# class ProductDetails(generics.RetrieveUpdateDestroyAPIView):
+#   queryset=Product.objects.all()
+#   serializer_class=ProductSerializer
 
 
 
