@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
-from rest_framework import generics,viewsets
-from rest_framework.decorators import action
+from rest_framework import viewsets
+from .pagination import CustomPagination
 # Create your views here.
 
 # viewset
@@ -17,6 +17,7 @@ class CategoryViewset(viewsets.ModelViewSet):
 class ProductViewset(viewsets.ModelViewSet):
   queryset=Product.objects.select_related('category').all()
   serializer_class=ProductSerializer
+  pagination_class=CustomPagination
 
 
 # class base view
