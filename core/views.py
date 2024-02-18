@@ -3,7 +3,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from .serializers import *
+User=get_user_model()
 # Create your views here.
 
 
@@ -22,3 +25,12 @@ def login(request):
             'token':token.key   
         })
     return Response("invalid")
+
+
+@api_view(['[POST]'])
+def register(request):
+    serializer=UserSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    
+    
+    
