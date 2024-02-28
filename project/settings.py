@@ -143,10 +143,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # global pagination
 # REST_FRAMEWORK = {
-#      'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-#     'PAGE_SIZE':50
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE':50,
+    
 # }
 
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 INTERNAL_IPS = [
     # ...

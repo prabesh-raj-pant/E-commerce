@@ -13,10 +13,10 @@ User=get_user_model()
 
 @api_view(['POST'])
 def login(request):
-    username=request.data.get('username')
+    email=request.data.get('username')
     password=request.data.get('password')
     
-    user=authenticate(username=username,password=password)
+    user=authenticate(username=email,password=password)
     
     if user:
         token,_=Token.objects.get_or_create(user=user)

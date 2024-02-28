@@ -3,12 +3,19 @@ from .models import *
 from .serializers import *
 from rest_framework import viewsets
 from .pagination import CustomPagination
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from .permissions import *
 # Create your views here.
 
 # viewset
 class CategoryViewset(viewsets.ModelViewSet):
   queryset=Category.objects.all()
   serializer_class=CategorySerializer
+  permission_classes=(
+    IsAuthenticatedOrReadOnly,
+    IsAdminOrNot,
+  )
+  
   
   
   
