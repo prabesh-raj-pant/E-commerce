@@ -42,7 +42,9 @@ class ProductViewset(viewsets.ModelViewSet):
   SearchFilter=('name',)
   
   
-  
+class Customer(viewsets.ModelViewSet):
+  queryset=Customer.objects.all()
+  serializer_class=CustomerSerializer
 
 
 # class base view

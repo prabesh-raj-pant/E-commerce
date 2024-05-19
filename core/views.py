@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from .serializers import *
+from django.core.mail import send_mail
 User=get_user_model()
 # Create your views here.
 
@@ -37,6 +38,12 @@ def register(request):
     user=User.objects.create_user(email=email,password=password)
 
     if user:
+        send_mail(
+            "Welcome to E-commerce",
+            "Hello"+ user.email+"Welcome to E-commerce",
+            "test@gmail.com",
+            [user.email],
+        )
         return Response('user has been created')
     return Response("something went wrong")
     
