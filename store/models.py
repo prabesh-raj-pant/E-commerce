@@ -30,13 +30,14 @@ class Customer(models.Model):
         (FEMALE_CHOICE,'FEMALE'),
         (OTHER_CHOICE,'OTHER')
     ]
-    first_name=models.CharField(max_length=100)
+    first_name=models.CharField(max_length=100,null=True)
     middle_name=models.CharField(max_length=100,blank=True,null=True)
-    last_name=models.CharField(max_length=100)
-    address=models.CharField(max_length=100)
+    last_name=models.CharField(max_length=100,null=True)
+    address=models.CharField(max_length=100,null=True)
     gender=models.CharField(
         max_length=1,
-        choices=GENDER_CHOICES
+        choices=GENDER_CHOICES,
+        blank=True,null=True
     )
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     def __str__(self):
