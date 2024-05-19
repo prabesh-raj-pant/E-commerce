@@ -1,9 +1,14 @@
 from rest_framework import serializers
 from .models import *
 class CategorySerializer(serializers.ModelSerializer):
+    total_product=serializers.IntegerField()
     class Meta:
         model=Category
-        fields=('id','name')
+        fields=('id','name','total_product')
+        
+    # def get_total_product(self,category:Category):
+    #     return category.products.count()
+    
         
 class ProductSerializer(serializers.ModelSerializer):
     price_with_tax=serializers.SerializerMethodField()

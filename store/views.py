@@ -5,17 +5,29 @@ from rest_framework import viewsets
 from .pagination import CustomPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import *
+from django_filters import rest_framework as filters
+from rest_framework import filters as f
+from .filters import ProductFilter
+from django.db.models import Q,Count,Prefetch
 # Create your views here.
 
 # viewset
 class CategoryViewset(viewsets.ModelViewSet):
   queryset=Category.objects.all()
+  
   serializer_class=CategorySerializer
   permission_classes=(
     IsAuthenticatedOrReadOnly,
     IsAdminOrNot,
   )
-  
+  def get_queryset(self):
+    return Category.objects.prefetch_related(
+           "products"
+      ) \
+      .annotate(
+        total_product=Count('products')
+    )\
+  .all()
   
   
   
@@ -25,6 +37,12 @@ class ProductViewset(viewsets.ModelViewSet):
   queryset=Product.objects.select_related('category').all()
   serializer_class=ProductSerializer
   pagination_class=CustomPagination
+  filter_backends=(filters.DjangoFilterBackend,f.SearchFilter)
+  filterset_class=ProductFilter
+  SearchFilter=('name',)
+  
+  
+  
 
 
 # class base view

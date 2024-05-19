@@ -15,7 +15,7 @@ class Product(models.Model):
     quantity=models.IntegerField(default=0)
     price=models.FloatField()
     discounted_price=models.FloatField()
-    category=models.ForeignKey(Category,on_delete=models.CASCADE)
+    category=models.ForeignKey(Category,on_delete=models.CASCADE,related_name='products',)
     
     def __str__(self)-> str:
         return self.name
