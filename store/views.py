@@ -42,11 +42,42 @@ class ProductViewset(viewsets.ModelViewSet):
   SearchFilter=('name',)
   
   
-class Customer(viewsets.ModelViewSet):
+# class Customer(viewsets.ModelViewSet):
+#   queryset=Customer.objects.all()
+#   serializer_class=CustomerSerializer
+  
+class CustomerViewset(viewsets.ModelViewSet):
   queryset=Customer.objects.all()
   serializer_class=CustomerSerializer
+  
+  
+class CartViewset(viewsets.ViewSet):
+  queryset=Cart.objects.all()
+  serializer_class=CartSeraillizer
+  pagination_class=CustomPagination
+  permission_classes=(IsAuthenticatedOrReadOnly,)
+  
+  def list(self,reques,*args,**kwargs):
+    customer=Customer.objects.filter(user=self.request.user).first()
+    cart,_=Cart.objects.prefetch_related('items').get_or_create(customer=customer)
+    serializer=CartSeraillizer(cart)
+    return Response(serializer.data)
+  
 
-
+class CartItemViewset(viewsets.ModelViewSet):
+  queryset=CartItem.objects.all()
+  serializer_class=CartItemSerializer
+  pagination_class=CustomPagination
+  authentication_classes=(IsAuthenticatedOrReadOnly,)
+  def get_queryset(self):
+    customer=Customer.objects.filter(user=self.request.user).first()
+    cart,_=Cart.objects.prefetch_related('items').get_or_create(customer=customer)
+    return CartItem.objects.filter(
+      cart=cart
+    )
+  
+  
+  
 # class base view
 # class CategoryList(generics.ListCreateAPIView):
 #   queryset=Category.objects.all()

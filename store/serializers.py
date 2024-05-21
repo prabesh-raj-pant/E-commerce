@@ -41,6 +41,33 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class CustomerSerializer(serializers.ModelSerializer):
+    user=serializers.HiddenField(default=serializers.CurrentUserDefault)
+    first_name=serializers.CharField(required=True)
+    middle_name=serializers.CharField(required=True)
+    last_name=serializers.CharField(required=True)
+    address=serializers.CharField(required=True)
+    gender=serializers.ChoiceField(required=True,choices=Customer.GENDER_CHOICES)
     class Meta:
-        models=Customer
+        model=Customer
         fields="__all__"
+
+
+class CartItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=CartItem
+        fields="__all__"
+
+
+
+class CartSeraillizer(serializers.ModelSerializer):
+    
+    customer=serializers.StringRelatedField()
+    customer_id=serializers.PrimaryKeyRelatedField(
+            queryset=Customer.objects.all(),
+            source='customer'
+        )
+    items=CartItemSerializer(many=True)
+    class Meta:
+        model=Cart
+        fields="__all__"
+
