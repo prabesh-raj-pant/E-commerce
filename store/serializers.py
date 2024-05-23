@@ -56,6 +56,31 @@ class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model=CartItem
         fields="__all__"
+        
+        
+        
+        
+class CartItemSerializer(serializers.ModelSerializer):
+    product_id=serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(),
+        source= "product"
+    )
+    product=ProductSerializer(read_only=True)
+    class Meta:
+        model=CartItem
+        fields=[
+            'id',
+            'product_id',   
+            'quantity',
+            'product',
+        ]
+        def create(self,validated_data):
+            request=self.contex['request']
+            cart= Cart.objects.get(customer__ser=request.user)
+            validated_data.update({
+                'cart':cart
+            })
+            return super().create(validated_data)
 
 
 

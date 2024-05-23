@@ -17,7 +17,7 @@ class CustomerAdmin(admin.ModelAdmin):
                 "address",
                 "gender",
     )
-    search_fields=('first_name',)
+    search_fields=('first_name','user__email',)
     list_per_page=10
 
 
