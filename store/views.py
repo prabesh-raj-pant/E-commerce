@@ -46,9 +46,31 @@ class ProductViewset(viewsets.ModelViewSet):
 #   queryset=Customer.objects.all()
 #   serializer_class=CustomerSerializer
   
-class CustomerViewset(viewsets.ModelViewSet):
+class CustomerViewset(viewsets.GenericViewSet):
   queryset=Customer.objects.all()
   serializer_class=CustomerSerializer
+  permission_classes=(IsAuthenticatedOrReadOnly,)
+
+  
+  
+  def get_queryset(self):
+    user=self.request.user
+    return Customer.objects.get(user=user)
+  
+  def list(self,request,*args,**kwargs):
+    customer=self.get_queryset().first()
+    serializer=self.serializer_class(customer)
+    return Response(serializer.data)
+
+    
+  def update(self,request,*args,**kwargs):
+    customer=self.get_queryset()
+    context={}
+    context['request']=request
+    serializer=self.serializer_class(data=request.data,instance=customer,context=context)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data)
   
   
 class CartViewset(viewsets.ViewSet):
@@ -76,7 +98,24 @@ class CartItemViewset(viewsets.ModelViewSet):
       cart=cart
     )
   
+
+class OrderViewset(viewsets.ModelViewSet):
+  queryset=Order.objects.all()
+  serializer_class=OrderSerializer
+  permission_classes=[
+    IsAuthenticatedOrReadOnly,
+  ]
   
+  def  get_queryset(self):
+     
+    return Order.objects.filter(
+        customer__user=self.request.user
+      )
+  
+  def get_serializer_class(self):
+    if self.request.method == "PUT":
+      return CancelOrderSerializer
+    return OrderSerializer
   
 # class base view
 # class CategoryList(generics.ListCreateAPIView):

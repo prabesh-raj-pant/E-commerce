@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from django.db import transaction
 class CategorySerializer(serializers.ModelSerializer):
     total_product=serializers.IntegerField()
     class Meta:
@@ -51,6 +52,8 @@ class CustomerSerializer(serializers.ModelSerializer):
         model=Customer
         fields="__all__"
 
+    
+    
 
 class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -96,3 +99,85 @@ class CartSeraillizer(serializers.ModelSerializer):
         model=Cart
         fields="__all__"
 
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=OrderItem
+        fields="__all__"
+ 
+class CancelOrderSerializer(serializers.ModelSerializer):
+    user=serializers.HiddenField(default=serializers.CurrentUserDefault())
+    shipping_address=serializers.CharField(read_only=True)
+    class Meta:
+        model=Order
+        fields=[
+                'id',
+                'shipping_address',
+                'user',
+            ]       
+        
+        
+
+class OrderSerializer(serializers.ModelSerializer):
+    user=serializers.HiddenField(default=serializers.CurrentUserDefault())
+    class Meta:
+        model=Order
+        fields=[
+                'id',
+                'shipping_address',
+                'user',
+            ]
+    @transaction.atomic()
+    def create(self,validated_data):
+        customer=Customer.objects.get(user=validated_data.get('user').pk)
+        cart=cart.objects.get(customer=customer)
+        cart_items=CartItem.objects.filter(cart=cart)
+        order=Order.objects.create(
+            customer=customer,
+            shipping_address=validated_data.get('shipping_address'),
+            status=Order.CONFIRM_CHOICES,
+        )
+        order_item_objects=[
+            OrderItem(
+                product=item.product,
+                price=item.product.price,
+                quantity=item.quantity, 
+                order=order,
+            )
+            for item in cart_items
+        ]
+        
+        OrderItem.objects.bulk_create(order_item_objects)
+        cart.delete()
+        return order
+        
+        
+
+
+        
+class ReviewSerializer(serializers.ModelSerializer):
+    customer=serializers.StringRelatedField(required=False)
+    class Meta:
+        model=Review
+        fields=[
+            "id",
+            "product",
+            "star",
+            "customer"
+        ]
+        
+        
+    def create(self, validated_data):
+        request=self.context['request']
+        customer=Customer.objects.get(user=request.user)
+        review=Review.objects.create(
+            customer=customer,
+            **validated_data         
+            )
+        return review
+    
+    
+    def update(self, instance, validated_data):
+        instance.product=validated_data['product']
+        instance.star=validated_data['star']
+        instance.save()
+        return instance
