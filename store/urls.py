@@ -9,6 +9,7 @@ routers.register('customers',CustomerViewset,basename='customer')
 routers.register('carts',CartViewset,basename='cart')
 routers.register('cart-items',OrderViewset,basename='cart-item')
 routers.register('orders',CartItemViewset,basename='order')
+routers.register('reviews',ReviewViewset,basename='review')
 urlpatterns = [
     # path('categories',CategoryViewset.as_view({
     #     'get':'list',

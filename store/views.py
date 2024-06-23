@@ -100,7 +100,7 @@ class CartItemViewset(viewsets.ModelViewSet):
   
 
 class OrderViewset(viewsets.ModelViewSet):
-  queryset=Order.objects.all()
+  queryset=Order.objects.prefetch_related('order_items').all()
   serializer_class=OrderSerializer
   permission_classes=[
     IsAuthenticatedOrReadOnly,
@@ -108,7 +108,7 @@ class OrderViewset(viewsets.ModelViewSet):
   
   def  get_queryset(self):
      
-    return Order.objects.filter(
+    return Order.objects.prefetch_related('order_items').filter(
         customer__user=self.request.user
       )
   
@@ -116,6 +116,18 @@ class OrderViewset(viewsets.ModelViewSet):
     if self.request.method == "PUT":
       return CancelOrderSerializer
     return OrderSerializer
+  
+  
+  
+class ReviewViewset(viewsets.ModelViewSet):
+  queryset=Review.objects.all()
+  serializer_class=ReviewSerializer
+  permission_classes=(
+    IsAuthenticatedOrReadOnly,
+    IsOwnerOrNot,
+  )
+  
+  
   
 # class base view
 # class CategoryList(generics.ListCreateAPIView):

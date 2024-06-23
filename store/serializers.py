@@ -114,18 +114,24 @@ class CancelOrderSerializer(serializers.ModelSerializer):
                 'shipping_address',
                 'user',
             ]       
+    def update(self,instance,validated_data):
+        instance.status=Order.CANCEL_CHOICES
+        instance.save()
+        return super().update(instance, validated_data)
         
         
 
 class OrderSerializer(serializers.ModelSerializer):
     user=serializers.HiddenField(default=serializers.CurrentUserDefault())
+    items=serializers.SerializerMethodField()
     class Meta:
         model=Order
-        fields=[
-                'id',
-                'shipping_address',
-                'user',
+        fields=["__all__"
             ]
+    
+    def get_items(seelf,order:Order):
+        return OrderItemSerializer(order.order_items.all(),many=True).data
+    
     @transaction.atomic()
     def create(self,validated_data):
         customer=Customer.objects.get(user=validated_data.get('user').pk)
@@ -177,6 +183,34 @@ class ReviewSerializer(serializers.ModelSerializer):
     
     
     def update(self, instance, validated_data):
+        instance.product=validated_data['product']
+        instance.star=validated_data['star']
+        instance.save()
+        return instance
+    
+    
+class ReviewSerializer(serializers.ModelSerializer):
+
+    customer=serializers.StringRelatedField(required=False)
+    class Meta:
+        model=Review
+        fields=[
+            "id",
+            "product", 
+            "star",    
+            "customer",    
+        ]
+    def create(self,validated_data):
+        request=self.contex['request']
+        customer=Customer.objects.get(user=request.user)
+        review=Review.objects.create(
+            customer=customer,
+            **validated_data
+        )
+        return review
+    
+    
+    def update(self,instance,validated_data):
         instance.product=validated_data['product']
         instance.star=validated_data['star']
         instance.save()
