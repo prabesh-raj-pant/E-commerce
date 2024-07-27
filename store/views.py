@@ -14,6 +14,7 @@ from django.db.models import Q,Count,Prefetch
 from rest_framework import mixins
 from drf_yasg.utils import swagger_auto_schema
 
+from django.shortcuts import render
 
 
 
@@ -146,4 +147,6 @@ class ReviewViewset(viewsets.ModelViewSet):
     
     
     
-        
+def index(request):
+    categories = Category.objects.prefetch_related('products').annotate(total_product=Count('products')).all()
+    return render(request, 'index.html', {'categories': categories})

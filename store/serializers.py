@@ -6,7 +6,7 @@ class CategorySerializer(serializers.ModelSerializer):
     total_product=serializers.IntegerField()
     class Meta:
         model=Category
-        fields=('id','name','total_product')
+        fields=('id','name','total_product','image')
         
     # def get_total_product(self,category:Category):
     #     return category.products.count()
