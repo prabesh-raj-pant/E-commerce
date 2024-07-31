@@ -50,6 +50,11 @@ class ProductViewset(viewsets.ModelViewSet):
     search_fields=('name',)
     
     
+    def get_queryset(self):
+        return Product.objects.prefetch_related(
+              "products"
+            )
+    
 
 
 class CustomerViewset(viewsets.GenericViewSet):
@@ -149,4 +154,5 @@ class ReviewViewset(viewsets.ModelViewSet):
     
 def index(request):
     categories = Category.objects.prefetch_related('products').annotate(total_product=Count('products')).all()
-    return render(request, 'index.html', {'categories': categories})
+    products = Product.objects.all()
+    return render(request, 'index.html', {'categories': categories,'products':products,})
