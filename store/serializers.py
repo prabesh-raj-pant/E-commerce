@@ -18,7 +18,8 @@ class SimpleCategorySerializer(serializers.ModelSerializer):
         fields=('id','name',)   
         
 class ProductSerialzer(serializers.ModelSerializer):
-    price_with_tax=serializers.SerializerMethodField()
+    price_with_tax=serializers.SerializerMethodField() 
+
     category_id=serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all()
         ,source='category'
@@ -34,7 +35,7 @@ class ProductSerialzer(serializers.ModelSerializer):
             "price_with_tax",
             "category_id",
             "category"
-        )
+        )  
     
     def get_price_with_tax(self,product:Product):
         return (product.discounted_price * 0.13 )+product.discounted_price

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %} 
 {% block title %}INDEX{% endblock title %}
 
 {% block body %}
@@ -10,7 +10,7 @@
                 <div class="col-md-3 mb-4">
                     <div class="card"> 
                         {% if category.image %}
-                            <img src="media/category_images/{{category.name}}.webp" class="card-img-top fixed-size " alt="{{ category.name }}"> 
+                            <img src=" {{category.image.url}}" class="card-img-top fixed-size " alt="{{ category.name }}"> 
                         {% else %}
                             <img src="{% static 'category_images/default.webp' %}" class="card-img-top" alt="{{ category.name }}">
                         {% endif %}
@@ -31,18 +31,20 @@
                 <div class="col-md-3 mb-4">
                     <div class="card"> 
                         {% if product.image %}
-                        <img src="media/product_images/{{ product.name }}.webp" class="card-img-top fixed-size">
+                        <img src="{{ product.image.url }}" class="card-img-top fixed-size" alt="{{ product.name }}">
                     {% else %}
-                        <img src="media/product_images/{{ product.name }}.png" class="card-img-top" alt="{{ product.name }}">
+                        <img src="media/product_images/default.png" class="card-img-top" alt="{{ product.name }}">
                     {% endif %}
                         <div class="card-body">
                             <h5 class="card-title">{{ product.name }}</h5> 
+                            <p class="card-text">Price:  <del  class="text-danger">{{ product.price }} </del> &nbsp; </p> 
                         </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
+    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
